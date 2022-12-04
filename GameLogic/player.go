@@ -9,12 +9,11 @@ import (
 )
 
 type Player struct {
-	Row              int8
-	Col              int8
-	Color            *ebiten.Image
-	CurrentShape     string
-	Rotation         uint8
-	rotationCooldown uint8
+	Row          int8
+	Col          int8
+	Color        *ebiten.Image
+	CurrentShape string
+	Rotation     uint8
 }
 
 func (player *Player) fall(grid *[30][15]Block) {
