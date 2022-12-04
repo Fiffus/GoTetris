@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Player struct {
@@ -108,39 +109,34 @@ func (player *Player) Update(grid *[30][15]Block) {
 }
 
 func (player *Player) rotate(grid *[30][15]Block) {
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
-		player.rotationCooldown++
-		if player.rotationCooldown == 2 {
-			var validPositions int8
-			if player.Rotation+1 < 4 {
-				for _, position := range Shapes[fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation+1)] {
-					if player.Row+position[0] < int8(len(grid)) && player.Row+position[0] > 0 {
-						if player.Col+position[1] < int8(len(grid[0])) && player.Col+position[1] > 0 {
-							if grid[player.Row+position[0]][player.Col+position[1]].Color == nil {
-								validPositions++
-							}
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		var validPositions int8
+		if player.Rotation+1 < 4 {
+			for _, position := range Shapes[fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation+1)] {
+				if player.Row+position[0] < int8(len(grid)) && player.Row+position[0] > 0 {
+					if player.Col+position[1] < int8(len(grid[0])) && player.Col+position[1] > 0 {
+						if grid[player.Row+position[0]][player.Col+position[1]].Color == nil {
+							validPositions++
 						}
 					}
 				}
-				if validPositions == int8(len(Shapes[fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation+1)])) {
-					for _, position := range Shapes[player.CurrentShape] {
-						grid[player.Row+position[0]][player.Col+position[1]].Color = nil
-					}
-					player.Rotation++
-				}
-			} else {
+			}
+			if validPositions == int8(len(Shapes[fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation+1)])) {
 				for _, position := range Shapes[player.CurrentShape] {
 					grid[player.Row+position[0]][player.Col+position[1]].Color = nil
 				}
-				player.Rotation = 0
+				player.Rotation++
 			}
-			if player.CurrentShape != "nothing" {
-				player.CurrentShape = fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation)
+		} else {
+			for _, position := range Shapes[player.CurrentShape] {
+				grid[player.Row+position[0]][player.Col+position[1]].Color = nil
 			}
-			player.rotationCooldown = 0
+			player.Rotation = 0
+		}
+		if player.CurrentShape != "nothing" {
+			player.CurrentShape = fmt.Sprintf("%vR%d", strings.Split(player.CurrentShape, "R")[0], player.Rotation)
 		}
 	}
-
 }
 
 func (player *Player) CheckLose(grid *[30][15]Block, lost *bool) {

@@ -54,7 +54,7 @@ func init() {
 			log.Fatal(err)
 		}
 	}
-	if backgroundImage, _, err = ebitenutil.NewImageFromFile("images/background/gopherBackground.png"); err != nil {
+	if backgroundImage, _, err = ebitenutil.NewImageFromFile("images/background/darkBackground.png"); err != nil {
 		log.Fatal(err)
 	}
 	if ttf, err = opentype.Parse(fonts.MPlus1pRegular_ttf); err != nil {
